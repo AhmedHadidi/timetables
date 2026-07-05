@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --slate: #0F172A; --slate-2: #1E293B; --slate-3: #334155;
+  --parch: #F8F6F1; --parch-2: #EFEBE2;
+  --morning: #F59E0B; --morning-bg: #FEF3C7; --morning-line: #D97706;
+  --evening: #4F46E5; --evening-bg: #E0E7FF; --evening-line: #4338CA;
+  --rest: #F43F5E; --rest-bg: #FFE4E6; --rest-line: #E11D48;
+  --xrest: #F59E0B; --xrest-bg: #FEF9C3; --xrest-line: #CA8A04;
+  --holiday: #8B5CF6; --holiday-bg: #F3E8FF; --holiday-line: #7C3AED;
+  --leave: #0EA5E9; --leave-bg: #E0F2FE; --leave-line: #0284C7;
+  --training: #14B8A6; --training-bg: #CCFBF1; --training-line: #0D9488;
+  --ink: #0F172A; --muted: #64748B; --line: #E2E8F0;
+  --good: #10B981; --warn: #F59E0B; --bad: #EF4444;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { direction: rtl; }
+body {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  background: var(--parch);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, .disp { font-family: 'Cairo', sans-serif; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select { font-family: inherit; }
+::-webkit-scrollbar { height: 9px; width: 9px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@media print {
+  header, button { display: none !important; }
+  table { page-break-inside: avoid; }
+  body { background: #fff; }
+}
