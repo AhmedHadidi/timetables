@@ -145,6 +145,16 @@ export default function App() {
                 employees={employees} onBuild={build}
                 readOnly={!canEdit}
                 onSaveSettings={async (hm) => { if (canEdit) await api.saveSettings({ morningStaff: 2, eveningStaff: 1, holidayMornings: [...hm] }); }}
+                onSaveEdits={async (s) => {
+                  if (!canEdit) return;
+                  try {
+                    await api.saveSchedule(config.year, config.month, s, config.startDay, config.firstEveningId);
+                    showFlash('good', 'تم حفظ التعديلات — ستظهر للموظفين');
+                  } catch (e) {
+                    console.error(e);
+                    showFlash('bad', 'تعذّر حفظ التعديلات');
+                  }
+                }}
                 showFlash={showFlash}
               />
             )}

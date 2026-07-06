@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import type { Employee, ScheduleResult, ShiftKind, Issue } from '../types';
 import type { AppConfig } from '../App';
@@ -19,6 +19,7 @@ interface Props {
   onBuild: () => void;
   readOnly?: boolean;
   onSaveSettings: (hm: Set<number>) => Promise<void>;
+  onSaveEdits: (s: ScheduleResult) => Promise<void>;
   showFlash: (t: 'good' | 'warn' | 'bad', m: string) => void;
 }
 
@@ -45,6 +46,10 @@ export default function ScheduleView(p: Props) {
   const { schedule, setSchedule } = p;
   const [showConfig, setShowConfig] = useState(false);
   const [drag, setDrag] = useState<{ ei: number; d: number } | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
+  // عند تغيّر الشهر المعروض، تُلغى حالة "غير محفوظ"
+  useEffect(() => { setDirty(false); }, [schedule?.year, schedule?.month]);
   if (!schedule) return <Empty />;
   const { emp, year, month } = schedule;
   const calWeeks = buildCalendarWeeks(schedule);
@@ -55,6 +60,7 @@ export default function ScheduleView(p: Props) {
     copy.emp[ei].days[d] = val;
     recomputeStats(copy);
     setSchedule(copy);
+    setDirty(true);
   };
   const onDrop = (ei: number, d: number) => {
     if (p.readOnly) return;
@@ -67,7 +73,13 @@ export default function ScheduleView(p: Props) {
     recomputeStats(copy);
     setSchedule(copy);
     setDrag(null);
+    setDirty(true);
     p.showFlash('good', 'تم تبديل المناوبتين');
+  };
+  const saveEdits = async () => {
+    setSaving(true);
+    try { await p.onSaveEdits(schedule); setDirty(false); }
+    finally { setSaving(false); }
   };
 
   return (
@@ -76,6 +88,19 @@ export default function ScheduleView(p: Props) {
         <FairnessCard fair={p.fair} />
         <IssuesCard issues={p.issues} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+          {!p.readOnly && (
+            <button onClick={saveEdits} disabled={!dirty || saving}
+              style={{
+                padding: '11px 22px', borderRadius: 11, fontFamily: 'Cairo', fontWeight: 800, fontSize: 14,
+                display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center',
+                background: dirty ? 'linear-gradient(135deg,var(--good),#059669)' : 'var(--parch-2)',
+                color: dirty ? '#fff' : 'var(--muted)',
+                boxShadow: dirty ? '0 4px 14px rgba(16,185,129,.35)' : 'none',
+                cursor: dirty && !saving ? 'pointer' : 'default',
+              }}>
+              💾 {saving ? '...جارٍ الحفظ' : dirty ? 'حفظ التعديلات' : 'محفوظ'}
+            </button>
+          )}
           {!p.readOnly && <button onClick={() => setShowConfig((s) => !s)} style={btnGhost}>⚙️ إعدادات التوزيع</button>}
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => exportExcel(schedule)} style={btnExport}>📊 Excel</button>
