@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../lib/useAuth';
-import { ADMIN_EMAIL } from '../lib/config';
+import { ADMIN_EMAILS } from '../lib/config';
 
 export default function Login({ onBack }: { onBack?: () => void }) {
   const { signIn } = useAuth();
@@ -42,7 +42,7 @@ export default function Login({ onBack }: { onBack?: () => void }) {
         </div>
 
         <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>البريد الإلكتروني</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder={ADMIN_EMAIL}
+        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder={ADMIN_EMAILS[0]}
           style={inp} onKeyDown={(e) => e.key === 'Enter' && submit()} autoComplete="email" />
 
         <label style={{ display: 'block', fontSize: 13, fontWeight: 700, margin: '14px 0 6px' }}>كلمة المرور</label>
